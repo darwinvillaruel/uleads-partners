@@ -1,0 +1,545 @@
+export type BaseType = "string" | "integer" | "date";
+
+export type RichField = {
+  label: string;
+  apiKey: string;
+  baseType: BaseType;
+  picklist?: string[];
+  multiple?: boolean;
+  sample?: string;
+};
+
+export type RichVertical = {
+  slug: string;
+  name: string;
+  region: "AU" | "NZ" | "US";
+  kind: "rich";
+  fields: RichField[];
+};
+
+export type SimpleVertical = {
+  slug: string;
+  name: string;
+  region: "AU" | "NZ" | "US";
+  kind: "simple";
+  fields: string[];
+};
+
+export type Vertical = RichVertical | SimpleVertical;
+
+const CURRENT_LENDER_OPTIONS = [
+  "Adelaide Bank", "AMP", "ANZ", "Bank Of Melbourne", "Bank Of South Australia", "Bankwest",
+  "Bluestone", "Citibank", "Commonwealth Bank", "Emoney", "Firefighters Mutual Bank", "Firstmac",
+  "Health Professional Banks", "Heritage", "ING Bank", "Latrobe", "Liberty",
+  "Macquarie Bank Mortgage Solutions", "ME Bank", "NAB", "Pepper", "Resimac", "St. George",
+  "Suncorp", "Teachers Mutual Bank", "UniBank", "Westpac", "Other Lender",
+];
+
+const AU_LIFE_INSURANCE_FUND_OPTIONS = [
+  "Onepath", "TAL", "AIA", "MLC", "Zurich", "Metlife", "NEOS", "ClearView", "Asteron Life",
+  "Integrity", "NobleOak", "CommInsure", "BT", "AMP", "No", "Other",
+];
+
+const NZ_LIFE_INSURANCE_FUND_OPTIONS = [
+  "AIA", "NIB", "Chubb", "Partners Life", "Asteron Life", "Fidelity Life", "Other", "No",
+];
+
+const SUPERFUND_OPTIONS = [
+  "Australian Super", "Australian Retirement Trust", "REST", "HOSTPLUS", "Aware Super", "HESTA",
+  "AMP", "CBUS", "MLC", "QSuper", "Active Super", "AMG Super", "Amist", "AMP", "ANZ",
+  "ASGARD Independence Plan Division Two", "Australian Catholic Super", "Australian Ethical Super",
+  "Australian Meat Industry Super (AMIST)", "Australian Retirement Trust", "AustralianSuper",
+  "AvSuper", "AwareSuper", "Bendigo SmartStart Super", "Brighter Super", "BT Super",
+  "BUSSQ Superannuation", "Care Super", "CBUS", "Child Care Super", "Christian Super", "Clearview",
+  "Colonial First State", "Commonwealth Bank", "Crescent Wealth Superannuation", "Defined Benefit",
+  "Energy Industries Super (EISS)", "Equipsuper", "ESS Super", "Fiducian Superannuation",
+  "First Super", "Future Super", "Government Employees Superannuation Board (GESB)", "Grow Super",
+  "Guild Super", "HESTA", "HOSTPLUS", "HUB24 Super Fund", "ING", "InTrust",
+  "IOOF Investment Management Super", "iQ super", "Kogan Super", "LegalSuper", "LGIA Super",
+  "Lutheran Super", "Macquarie", "MAP", "Maritime Super", "Meat Industry Employees Super (MIESF)",
+  "Media Super", "Mercer Super", "Military Super", "Mine Super", "MLC", "Nationwide Super",
+  "NESS Super", "Netwealth", "Next Super", "NGS Super", "One Path", "One Super", "Perpetual",
+  "Plum Super", "Prime Super", "Public Sector Superannuation Scheme", "Qantas Super", "Qsuper",
+  "REISuper", "REST", "Retirement Portfolio Service", "Retirement Wrap", "Smart Future Trust",
+  "Smart Save", "smartMonday", "SMSF", "Spaceship Super", "Spirit Super", "SPSL Master Trust",
+  "Statewide", "Suncorp", "Super Trace", "Superhero Super", "Superstate", "Telstra Super",
+  "TWUSuper", "UniSuper", "Vanguard Super", "Verve Super", "VIC Super", "Virgin Money Super",
+  "Vision Super", "Wealth Personal Superannuation and Pension Fund", "Zurich", "Other", "Not Sure",
+];
+
+const POS_PROVIDER_OPTIONS = [
+  "AccuPOS", "CAKE POS", "Clover", "eHopper", "Epos Now", "Erply", "Franpos", "GoDaddy POS",
+  "Harbortouch", "Heartland Retail POS", "Helcim", "Intuit QuickBooks POS", "KORONA POS", "Lavu",
+  "Lightspeed", "NCR Aloha", "PayPal Zettle", "POS Nation", "Revel Systems", "Shopify POS",
+  "Square", "Toast", "TouchBistro", "Other",
+];
+
+const AU_POS_RETAIL_OPTIONS = [
+  "apparel footwear", "merchandise sports goods store", "tobacco vape store", "salon barber",
+  "liquor store", "other",
+];
+
+const AU_POS_FOOD_DRINK_OPTIONS = [
+  "cafe/ coffee shop", "fast casual / counter service", "food truck", "casual restaurant",
+  "fine dining restaurant", "bar/ nightclub",
+];
+
+const AU_POS_OTHER_OPTIONS = [
+  "food (restaurant / cafe)", "amusement / vending", "leisure (gym/span)",
+  "merchandise and sporting goods", "convenience store", "butcher, deli or fishmonger", "salon",
+  "retail (food & beverage)", "professional services", "apparel & footwear", "grocery",
+  "food & beverage", "bottle shop", "tobacco & vape", "other",
+];
+
+const AU_POS_COMPANY_TYPE_OPTIONS = [
+  ...AU_POS_RETAIL_OPTIONS, ...AU_POS_FOOD_DRINK_OPTIONS, ...AU_POS_OTHER_OPTIONS,
+];
+
+const US_POS_RETAIL_OPTIONS = [
+  "apparel footwear", "merchandise sports goods store", "grocery", "convenience store",
+  "food & beverage", "butcher, deli or fishmonger", "bottle shop", "salon", "tobacco & vape",
+  "other",
+];
+
+const US_POS_FOOD_DRINK_OPTIONS = [
+  "cafe/ coffee shop", "fast casual / counter service", "food truck", "casual restaurant",
+  "fine dining restaurant", "bar/ nightclub", "other",
+];
+
+const US_POS_OTHER_OPTIONS = [
+  "food (restaurant / cafe)", "amusement / vending", "leisure (gym/span)",
+  "merchandise and sporting goods", "convenience storel", "butcher, deli or fishmonger", "salon",
+  "retail (food & beverage)", "professional services", "apparel & footwear", "grocery",
+  "food & beverage", "bottle shop", "tobacco & vape", "other",
+];
+
+export const VERTICALS: Vertical[] = [
+  {
+    slug: "au-business-loans",
+    name: "AU Business Loans",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Date of Birth", apiKey: "dob", baseType: "date", sample: "dd/mm/yyyy" },
+      { label: "Postcode", apiKey: "postcode", baseType: "integer", sample: "5037" },
+      { label: "Do you have ABN?", apiKey: "ABN", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Are you an Australian citizen?", apiKey: "Are_you_an_Australian_citizen", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Are you a homeowner?", apiKey: "Are_you_a_home_owner", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "How long have you been in business (in months)?", apiKey: "How_long_have_you_been_in_business", baseType: "string", picklist: ["0 - 5 months", "6 months", "12 months", "24 months", "36 months", "48 months"], sample: "12 months" },
+      { label: "Purpose of loan", apiKey: "Purpose_of_loan", baseType: "string", picklist: ["day to day capital", "equipment / asset", "vehicle / transport", "fitout / refurbishment", "purchasing property"], sample: "purchasing property" },
+      { label: "Monthly revenue", apiKey: "Monthly_revenue", baseType: "integer", sample: "300000" },
+      { label: "Estimated loan amount", apiKey: "Estimated_loan_amount", baseType: "string", picklist: ["ql", "nsw", "vic", "tas", "act", "sa", "wa", "nt"], sample: "nsw" },
+      { label: "Business address", apiKey: "Business_address", baseType: "string", sample: "Unit 1/47 Selby St, Kurralta Park SA 5037, Australia" },
+      { label: "Loan amount", apiKey: "loan_amount", baseType: "integer", sample: "30000" },
+      { label: "Company Name", apiKey: "Company_Name", baseType: "string", sample: "ABC Company" },
+      { label: "Industry", apiKey: "Industry", baseType: "string", sample: "Transportation" },
+    ],
+  },
+  {
+    slug: "au-health-insurance",
+    name: "AU Health Insurance",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "What cover are you interested in?", apiKey: "what_cover_are_you_interested_in", baseType: "string", picklist: ["hospital cover", "hospital + extra's", "extra's cover"], sample: "hospital cover" },
+      { label: "What are you hoping to achieve?", apiKey: "what_are_you_hoping_to_achieve", baseType: "string", picklist: ["lower my premium", "upgrade cover", "planning a family", "cover for tax purposes", "just looking"], sample: "upgrade cover" },
+      { label: "What hospital cover are you looking for?", apiKey: "what_hospital_cover_are_you_looking_for", baseType: "string", picklist: ["pregnancy", "joint replacements", "cataracts", "heart surgery", "joint reconstructions", "other"], sample: "cataracts" },
+      { label: "Any extra cover?", apiKey: "any_extra_cover", baseType: "string", picklist: ["general dental", "major dental", "optical", "physio", "chiro", "remedial massage", "hearing aids", "other"], sample: "chiro" },
+      { label: "Do you have an existing health fund?", apiKey: "do_you_have_an_existing_health_fund", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "What state are you located in?", apiKey: "what_state_are_you_located_in_", baseType: "string", picklist: ["Western Australia", "New South Wales", "Victoria", "South Australia", "Tasmania", "New Territory", "Queensland"], sample: "Victoria" },
+      { label: "Are you an Australian citizen or permanent resident?", apiKey: "are_you_an_australian_citizen_or_permanent_resident", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+    ],
+  },
+  {
+    slug: "au-hearing-aid",
+    name: "AU Hearing Aid",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "State", apiKey: "state", baseType: "string", picklist: ["Western Australia", "New South Wales", "Victoria", "South Australia", "Tasmania", "New Territory", "Queensland"], sample: "Victoria" },
+      { label: "Postcode", apiKey: "postcode", baseType: "integer", sample: "3000" },
+      { label: "Do you currently have a hearing aid?", apiKey: "do_you_currently_have_a_hearing_aid", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Are you older or younger than 50 years old?", apiKey: "are_you_older_or_younger_than_50_years_old", baseType: "string", picklist: ["yes", "No, I'm younger than 50 years old"], sample: "yes" },
+      { label: "What gender are you?", apiKey: "what_gender_are_you", baseType: "string", picklist: ["male", "female"], sample: "male" },
+    ],
+  },
+  {
+    slug: "au-life-insurance",
+    name: "AU Life Insurance",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "6/55 Mamre Rd, St Marys NSW 2760, Australia" },
+      { label: "What gender are you?", apiKey: "what_gender_are_you", baseType: "string", picklist: ["male", "female"], sample: "male" },
+      { label: "Have you smoked tobacco in the past 12 months?", apiKey: "have_you_smoked_tobacco_in_the_past_12_months", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "What type of cover are you looking for?", apiKey: "what_type_of_cover_are_you_looking_for", baseType: "string", picklist: ["life insurance", "trauma", "total & permanent disability", "income protection"], multiple: true, sample: "life insurance, trauma" },
+      { label: "What level of cover are you looking for?", apiKey: "what_level_of_cover_are_you_looking_for", baseType: "string", picklist: ["$300,000", "$400,000", "$500,000", "$600,000", "$700,000", "$800,000", "$900,000", "$1,000,000+"], sample: "$400,000" },
+      { label: "Do you currently have a life insurance fund?", apiKey: "do_you_currently_have_a_life_insurance_fund", baseType: "string", picklist: AU_LIFE_INSURANCE_FUND_OPTIONS, sample: "NEOS" },
+      { label: "Employment status", apiKey: "employment_status", baseType: "string", picklist: ["employed", "self-employed", "unemployed", "retired"], sample: "employed" },
+      { label: "How old are you?", apiKey: "how_old_are_you", baseType: "string", picklist: ["21 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "70 - 79"], sample: "21 - 29" },
+    ],
+  },
+  {
+    slug: "au-mortgage-loan",
+    name: "AU Mortgage Loan",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "Lookout Rd, New Lambton Heights NSW 2305, Australia" },
+      { label: "Street", apiKey: "street_address", baseType: "string", sample: "Lookout Rd" },
+      { label: "Suburb", apiKey: "suburb", baseType: "string", sample: "New Lambton Heights" },
+      { label: "State", apiKey: "state", baseType: "string", sample: "New South Wales" },
+      { label: "Postcode", apiKey: "postcode", baseType: "string", sample: "2305" },
+      { label: "What type of home do you have?", apiKey: "what_type_of_home_do_you_have", baseType: "string", picklist: ["house", "townhouse", "apartment", "other"], sample: "townhouse" },
+      { label: "What is the purpose of this property?", apiKey: "what_is_the_purpose_of_this_property", baseType: "string", picklist: ["i live in this property", "it's an investment property"], sample: "it's an investment property" },
+      { label: "Why are you looking to refinance?", apiKey: "why_are_you_looking_to_refinance", baseType: "string", picklist: ["decrease repayments", "payoff my loan faster", "consolidate debt/get cash out"], sample: "consolidate debt/get cash out" },
+      { label: "What is your credit history?", apiKey: "what_is_your_credit_history", baseType: "string", picklist: ["excellent", "average", "fair", "poor"], sample: "excellent" },
+      { label: "Roughly how much is the property valued at?", apiKey: "prop_value", baseType: "integer", sample: "50000" },
+      { label: "Who is your current lender?", apiKey: "cur_lender", baseType: "string", picklist: CURRENT_LENDER_OPTIONS, sample: "AMP" },
+      { label: "What is your outstanding loan amount?", apiKey: "loan_amt", baseType: "integer", sample: "50000" },
+      { label: "Interest rate", apiKey: "interestrate", baseType: "integer", sample: "4.50" },
+      { label: "What is your employment status?", apiKey: "what_is_your_employment_status", baseType: "string", picklist: ["employed", "self-employed", "retired", "un-employed"], sample: "self-employed" },
+    ],
+  },
+  {
+    slug: "au-mva-claims",
+    name: "AU MVA Claims",
+    region: "AU",
+    kind: "simple",
+    fields: [
+      "leadId",
+      "First Name", "Last Name", "Email", "Phone Number", "DOB", "Address",
+      "What state did the accident occur?", "How did the incident occur?",
+      "How long ago did the injury occur?",
+      "What type of medical attention have you sought due to the injury or illness?",
+      "Are you currently working?", "Have you made a claim yet?",
+      "Have you suffered an injury or illness due to a motor vehicle accident?",
+      "What type of injuries were sustained?",
+      "Have you incurred any medical expenses because of the injury or illness?",
+      "Have you incurred any wage loss because of the injury or illness?",
+    ],
+  },
+  {
+    slug: "au-pos",
+    name: "AU POS",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Which industry is your business in?", apiKey: "which_industry_is_your_business_in", baseType: "string", picklist: ["retail", "food & drink", "other"], sample: "retail" },
+      { label: "Which best describes your company?", apiKey: "which_best_describes_your_company", baseType: "string", picklist: AU_POS_COMPANY_TYPE_OPTIONS, sample: "food truck" },
+      { label: "Do you currently own a POS system?", apiKey: "do_you_currently_own_a_pos_system", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "If yes, who is your current provider?", apiKey: "who_is_your_current_provider", baseType: "string", picklist: POS_PROVIDER_OPTIONS },
+      { label: "How many terminals do you require?", apiKey: "how_many_terminals_do_you_require", baseType: "string", picklist: ["1", "2", "3 - 5", "over 5"], sample: "2" },
+      { label: "How much do you aim to process each month?", apiKey: "how_much_do_you_aim_to_process_each_month", baseType: "string", picklist: ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "$10,000 - $20,000", "$20,000 - $40,000", "$40,000 - $100,000", "over $100,000", "none or unsure"], sample: "$10,000 - $20,000" },
+      { label: "What sort of POS System do you require?", apiKey: "what_sort_of_pos_system_do_you_require", baseType: "string", picklist: ["complete pos system", "tablet / ipad based system", "pos software only", "unsure, experts will advise"], sample: "complete pos system" },
+      { label: "When do you want to install a new POS system?", apiKey: "when_do_you_want_to_install_a_new_pos_system", baseType: "string", picklist: ["asap", "1-3 months", "4-6 months"], sample: "asap" },
+      { label: "What's the postcode of your business?", apiKey: "postcode", baseType: "integer", sample: "3000" },
+      { label: "What's your company name?", apiKey: "what_is_your_company_name", baseType: "string", sample: "ACME Company" },
+    ],
+  },
+  {
+    slug: "au-prime-auto",
+    name: "AU Prime Auto",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "6/55 Mamre Rd, St Marys NSW 2760, Australia" },
+      { label: "Type of vehicle", apiKey: "type_of_vehicle", baseType: "string", picklist: ["car", "van", "suv", "truck"], sample: "suv" },
+      { label: "Monthly budget", apiKey: "monthly_budget", baseType: "string", picklist: ["$250 - $375/mo", "$376 - $500/mo", "$501+/mo", "under $250/mo"], sample: "$501+/mo" },
+      { label: "Do you have an existing vehicle?", apiKey: "existing_vehicle", baseType: "string", picklist: ["no", "Yes, I want to trade it in", "Yes I'm keeping it"], sample: "Yes, I want to trade it in" },
+      { label: "What best represents your credit score?", apiKey: "credit_score", baseType: "string", picklist: ["excellent", "great", "good", "average", "poor"], sample: "great" },
+      { label: "Date of birth", apiKey: "dob", baseType: "date", sample: "dd-mm-yyyy" },
+      { label: "Employment status", apiKey: "employment_status", baseType: "string", picklist: ["full-time", "part-time", "casual", "self-employed", "unemployed"], sample: "self-employed" },
+      { label: "Current monthly gross income", apiKey: "gross_monthly_income", baseType: "integer", sample: "6000" },
+      { label: "How long have you been earning this income?", apiKey: "how_long_have_they_earned_this_income", baseType: "string", picklist: ["3-6 months", "6-12 months", "12-months - 2 years", "2 years+", "less than 3 months"], sample: "6-12 months" },
+      { label: "How much are you looking to borrow?", apiKey: "amount_they_are_looking_to_borrow", baseType: "integer", sample: "12000" },
+      { label: "Where are you working?", apiKey: "where_are_they_working", baseType: "string", sample: "Brisbane" },
+      { label: "Do you own or rent your home?", apiKey: "own_or_rent", baseType: "string", picklist: ["rent", "own", "other"], sample: "own" },
+      { label: "What are your monthly (rent/mortgage) payments?", apiKey: "rent/month_mortgage_payments", baseType: "string", picklist: ["0-$250/mo", "$250-$500/mo", "$500-$1000/mo", "$1000-$2000/mo", "$2000+/mo"], sample: "$500-$1000/mo" },
+      { label: "Are you an Australian citizen or permanent resident?", apiKey: "are_you_australian_citizen_resident", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "How long have you lived at your address?", apiKey: "how_long_have_live_at_address", baseType: "string", picklist: ["less than 3 months", "3-6 months", "6-12 months", "12 months-2 years", "2+ years"], sample: "12 months-2 years" },
+    ],
+  },
+  {
+    slug: "au-property-investment",
+    name: "AU Property Investment",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "What state are you in?", apiKey: "What_State_Are_You_In", baseType: "string", picklist: ["ql", "nsw", "vic", "tas", "act", "sa", "wa", "nt"], sample: "nsw" },
+      { label: "What best describes your living status?", apiKey: "what_best_describes_your_living_status", baseType: "string", picklist: ["i own", "paying mortgage", "renting", "i rent, but i own an investment property"], sample: "paying mortgage" },
+      { label: "Roughly, how much is your property worth?", apiKey: "roughly_how_much_is_your_property_worth", baseType: "integer", sample: "250000" },
+      { label: "Roughly, how much is still remaining on your mortgage(s)?", apiKey: "mortgage_remaining", baseType: "integer", sample: "50000" },
+      { label: "What is your combined household income?", apiKey: "what_is_your_combined_household_income", baseType: "string", picklist: ["Less Than $60,000", "$60,000 - $120,000", "$120,000 - $180,000", "$180,000+"], sample: "$60,000 - $120,000" },
+      { label: "What is your age?", apiKey: "what_is_your_age", baseType: "string", picklist: ["under 25", "25 - 55", "over 55"], sample: "25 – 55" },
+    ],
+  },
+  {
+    slug: "au-shuffling-debt",
+    name: "AU Shuffling Debt",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "How much do you owe in unsecured debts?", apiKey: "how_much_do_you_owe_in_unsecured_debts", baseType: "string", picklist: ["Under $6,000", "$6,000 - $10,000", "$10,000 - $50,000", "$50,000 - $100,000", "over $100,000"], sample: "$10,000 - $50,000" },
+      { label: "Accurately list all your debts", apiKey: "home_loanscar_loanscredit_cardspersonal_loanspayday_loansother_debts", baseType: "integer", sample: "Home_loans: $10,000; Car_loans: $20,000" },
+      { label: "Are you currently behind on any repayments?", apiKey: "are_you_currently_behind_on_any_repayments", baseType: "string", picklist: ["yes", "no", "not yet, but its getting hard"], sample: "yes" },
+      { label: "What's your current income situation?", apiKey: "whats_your_current_income_situation", baseType: "string", picklist: ["employed full-time", "employed part-time or casual", "receiving centrelink", "unemployed", "retired"], sample: "unemployed" },
+      { label: "What is your current weekly income? (after tax)", apiKey: "current_weekly_income", baseType: "integer", sample: "5000" },
+      { label: "Do you rent or own your home?", apiKey: "do_you_rent_or_own_your_home", baseType: "string", picklist: ["rent", "own with mortgage", "own outright", "living with family", "other"], sample: "Own with mortgage" },
+      { label: "What are your monthly (rent/mortgage) payments?", apiKey: "monthly_rent_mortgage_payments", baseType: "integer", sample: "400" },
+      { label: "What state are you in?", apiKey: "what_state_are_you_in", baseType: "string", picklist: ["qld", "nsw", "vic", "sa", "nt", "wa", "act", "tas"], sample: "qld" },
+      { label: "Have you ever filed for bankruptcy or entered a debt agreement before?", apiKey: "filed_for_bankruptcy_or_entered_a_debt_agreement_before", baseType: "string", picklist: ["yes", "no", "not sure"], sample: "no" },
+    ],
+  },
+  {
+    slug: "au-smsf",
+    name: "AU SMSF (Self-Managed Super Fund)",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Date of Birth", apiKey: "dob", baseType: "date", sample: "dd/mm/yyyy" },
+      { label: "What type of super fund do you have?", apiKey: "What_type_of_super_fund_do_you_have", baseType: "string", picklist: ["self-managed superfund", "retail fund", "public sector fund", "not sure"], sample: "Self-managed superfund" },
+      { label: "What is your combined household super?", apiKey: "What_Is_Your_Combined_Household_Super", baseType: "string", picklist: ["under $150k", "$150k - $200k", "$200k - $225k", "$225k +"], sample: "$225k +" },
+      { label: "Combined Annual Household Income", apiKey: "Combined_Annual_Household_Income", baseType: "string", picklist: ["under $80k", "$80k - $120k", "$120k +"], sample: "$120k +" },
+      { label: "What state are you in?", apiKey: "What_State_Are_You_In", baseType: "string", picklist: ["ql", "nsw", "vic", "tas", "act", "sa", "wa", "nt"], sample: "nsw" },
+      { label: "How old are you?", apiKey: "How_old_are_you", baseType: "string", picklist: ["under 30", "30 - 60", "over 60"], sample: "30 - 60" },
+    ],
+  },
+  {
+    slug: "au-subprime-auto",
+    name: "AU SubPrime Auto",
+    region: "AU",
+    kind: "simple",
+    fields: [
+      "leadId",
+      "email", "firstname", "lastname", "dob", "street", "phone", "gross_monthly_income",
+      "how_long_have_they_earned_this_income", "where_are_they_working_company_name__job_title",
+      "are_you_an_australian_citizen_or_permanent_resident", "how_long_have_you_lived_at_this_address",
+      "vehicle_type", "monthly_budge", "employment_status", "living_status",
+      "rent/month_mortgage_payments", "do_they_have_a_vehicle", "credit_score",
+      "Amount_they_are_looking_to_borrow",
+    ],
+  },
+  {
+    slug: "au-superannuation",
+    name: "AU Superannuation",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "What super fund are you currently with?", apiKey: "What_super_fund_are_you_currently_with", baseType: "string", picklist: SUPERFUND_OPTIONS, sample: "Kogan Super" },
+      { label: "Rough super balance", apiKey: "rough_super_balance", baseType: "integer", sample: "490000" },
+      { label: "How old are you?", apiKey: "How_old_are_you", baseType: "string", picklist: ["20 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69", "Over 70"], sample: "50 - 59" },
+      { label: "Current employment status", apiKey: "Current_employment_status", baseType: "string", picklist: ["employed", "retired", "self-employed", "centrelink"], sample: "self-employed" },
+      { label: "Reason for your inquiry", apiKey: "Reason_for_your_inquiry", baseType: "string", picklist: ["Is my fund performing", "The fees I'm paying", "Do I have lost super", "All of the above"], sample: "The fees I'm paying" },
+      { label: "What state are you located in?", apiKey: "what_state_are_you_located", baseType: "string", picklist: ["WA", "NSW", "VIC", "SA", "TAS", "NT", "QLD", "ACT"], sample: "VIC" },
+    ],
+  },
+  {
+    slug: "au-tpd-claims",
+    name: "AU TPD Claims",
+    region: "AU",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Date of Birth", apiKey: "dob", baseType: "date", sample: "dd/mm/yyyy" },
+      { label: "Have you at anytime been a member of a super fund?", apiKey: "Have_you_at_anytime_been_a_member_of_a_super_fund", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Have you left your last job due to an injury or illness?", apiKey: "Have_you_left_your_last_job_due_to_an_injury_or_illness", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Have you been off work for 3+ months?", apiKey: "Have_you_been_off_work_for_3_months", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Are you able to return to any sort of work?", apiKey: "Are_you_able_to_return_to_any_sort_of_work", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Roughly when did your injury or illness occur?", apiKey: "Roughly_when_did_your_injury_or_illness_occur", baseType: "string", picklist: ["less than 3 months", "3 - 6 months", "6 months +"], sample: "3 - 6 months" },
+      { label: "What state were you working in when injured?", apiKey: "What_state_were_you_working_in_when_you_sustained_the_injury_or_illness", baseType: "string", picklist: ["ql", "nsw", "vic", "tas", "act", "sa", "wa", "nt"], sample: "nsw" },
+    ],
+  },
+  {
+    slug: "nz-auto-prime",
+    name: "NZ Auto Prime",
+    region: "NZ",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "443296269" },
+      { label: "Date of Birth", apiKey: "dob", baseType: "date", sample: "dd/mm/yyyy" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "16A Galloway Street, Whakatane Bay of Plenty 5810" },
+      { label: "Type of vehicle", apiKey: "start_by_clicking_on_your_preferred_type_of_vehicle", baseType: "string", picklist: ["car", "van", "suv", "truck"], sample: "suv" },
+      { label: "What is your monthly budget?", apiKey: "what_is_your_monthly_budget", baseType: "string", picklist: ["$250 - $375 /mo", "$376 - $500 /mo", "$501 + /mo", "Under $250 /mo"], sample: "$376 - $500 /mo" },
+      { label: "Do you have an existing vehicle?", apiKey: "do_you_have_an_existing_vehicle", baseType: "string", picklist: ["yes, I want to trade it in", "yes, I'm keeping it", "no"], sample: "No" },
+      { label: "What best represents your credit?", apiKey: "what_best_represents_your_credit", baseType: "string", picklist: ["excellent", "great", "good", "average", "poor"], sample: "Great" },
+      { label: "What is your employment status?", apiKey: "what_is_your_employment_status", baseType: "string", picklist: ["full-time", "part-time", "self-employed", "casual", "unemployed"], sample: "Full Time" },
+      { label: "Are you a New Zealand citizen or permanent resident?", apiKey: "are_you_a_new_zealand_citizen_or_permanent_resident", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "What is your current monthly gross income?", apiKey: "what_is_your_current_monthly_gross_income", baseType: "integer", sample: "5000" },
+      { label: "And how long have you been earning this income?", apiKey: "how_long_have_you_been_earning_this_income", baseType: "string", picklist: ["less than 3 months", "3-6 months", "6-12 months", "12 months - 2 years", "2+ years"], sample: "6 - 12 months" },
+      { label: "How much are you looking to borrow?", apiKey: "how_much_are_you_looking_to_borrow", baseType: "integer", sample: "10000" },
+      { label: "Where are you working?", apiKey: "where_are_you_working", baseType: "string", sample: "16A Galloway Street, Whakatane Bay of Plenty 5810" },
+      { label: "Do you own or rent your home?", apiKey: "do_you_own_or_rent_your_home", baseType: "string", picklist: ["own", "rent", "other"], sample: "own" },
+      { label: "What are your monthly (rent/mortgage) payments?", apiKey: "what_are_your_monthly_mortgate_rent_payments", baseType: "string", picklist: ["0 - $250 / mo", "$250 - $500 / mo", "$500 - $1000 / mo", "$1000 - $2000 / mo", "$2000 + / mo"], sample: "$500 - $1000 / mo" },
+      { label: "And how long have you lived at this address?", apiKey: "how_long_have_you_lived_at_this_address", baseType: "string", picklist: ["less than 3 months", "3 - 6 months", "6 - 12 months", "12months - 2 years", "2+ years"], sample: "12 months - 2 years" },
+    ],
+  },
+  {
+    slug: "nz-business-loans",
+    name: "NZ Business Loans",
+    region: "NZ",
+    kind: "simple",
+    fields: [
+      "leadId",
+      "First Name", "Last Name", "Email", "Phone Number", "DOB", "Address",
+      "Do you have an NZBN?", "Are you an NZ citizen or permanent resident?",
+      "Are you a homeowner?", "How long have you been in business?", "Loan Purpose",
+      "Monthly Revenue", "Estimated Loan Amount", "Company Name",
+      "What industry are they in?", "Credit Score",
+    ],
+  },
+  {
+    slug: "nz-health-insurance",
+    name: "NZ Health Insurance",
+    region: "NZ",
+    kind: "simple",
+    fields: [
+      "leadId",
+      "Firstname", "Lastname", "Phone", "Email", "DOB", "What gender are you?",
+      "Do you currently have medical insurance", "Has anything changed since your existing health policy",
+      "What are you hoping to achieve", "Who is your health cover for",
+      "What type of cover are you looking for",
+      "Do you have a history of Cancer, Heart Conditions or Diabetes?",
+      "Are you or your partner a smoker", "Which health conditions do you have a history of",
+      "What city are you closest to",
+    ],
+  },
+  {
+    slug: "nz-life-insurance",
+    name: "NZ Life Insurance",
+    region: "NZ",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "0296252376" },
+      { label: "Date of Birth", apiKey: "dob", baseType: "date", sample: "dd/mm/yyyy" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "57 Marshall Avenue, Durie Hill, Wanganui, 4500, New Zealand" },
+      { label: "What gender are you?", apiKey: "what_gender_are_you", baseType: "string", picklist: ["male", "female"], sample: "male" },
+      { label: "Have you smoked tobacco in the past 12 months?", apiKey: "have_you_smoked_tobacco_in_the_past_12_months", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "What type of cover are you looking for?", apiKey: "what_type_of_cover_are_you_looking_for", baseType: "string", picklist: ["life insurance", "trauma", "total & permanent disability", "income protection", "other"], sample: "income protection" },
+      { label: "What level of cover are you looking for?", apiKey: "what_level_of_cover_are_you_looking_for", baseType: "string", picklist: ["$300000", "$400000", "$500000", "$600000", "$700000", "$800000", "$900000", "$1000000"], sample: "$600,000" },
+      { label: "Do you currently have a life insurance fund?", apiKey: "life_insurance_fund", baseType: "string", picklist: NZ_LIFE_INSURANCE_FUND_OPTIONS, sample: "AIA" },
+      { label: "Are you a New Zealand citizen or permanent resident?", apiKey: "are_you_a_new_zealand_citizen_or_permanent_resident", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "What is your current employment status?", apiKey: "what_is_your_current_employment_status", baseType: "string", picklist: ["employed", "unemployed", "self-employed", "retired"], sample: "employed" },
+      { label: "How old are you?", apiKey: "how_old_are_you", baseType: "string", picklist: ["21 - 29", "30 - 39", "40 - 49", "50 - 59", "60 - 69"], sample: "21 - 29" },
+      { label: "Do you have a history of cancer, heart conditions, hypertension or diabetes?", apiKey: "do_you_have_a_history_of_cancer_heart_conditions_hypertension_or_diabetes", baseType: "string", picklist: ["yes", "no"], sample: "yes" },
+      { label: "Which health conditions do you have a history of?", apiKey: "diseases_history", baseType: "string", picklist: ["cancer", "heart conditions", "hypertension", "diabetes"], sample: "cancer" },
+    ],
+  },
+  {
+    slug: "nz-mortgage",
+    name: "NZ Mortgage",
+    region: "NZ",
+    kind: "simple",
+    fields: [
+      "leadId",
+      "Full Name", "Id", "What type of house do they have", "Purpose of the property",
+      "Roughly how much is your property valued at", "Why are you looking to refinance",
+      "Property Address", "Current lender", "Current interest rate", "Credit history",
+      "Employment status", "Outstanding loan amount",
+    ],
+  },
+  {
+    slug: "us-pos-quote",
+    name: "US POS Quote",
+    region: "US",
+    kind: "rich",
+    fields: [
+      { label: "Lead ID", apiKey: "leadId", baseType: "integer", sample: "4821936" },
+      { label: "Email", apiKey: "email", baseType: "string", sample: "johndoe@gmail.com" },
+      { label: "First Name", apiKey: "firstname", baseType: "string", sample: "John" },
+      { label: "Last Name", apiKey: "lastname", baseType: "string", sample: "Doe" },
+      { label: "Phone Number", apiKey: "phone1", baseType: "integer", sample: "4432962690" },
+      { label: "Address", apiKey: "address", baseType: "string", sample: "123 Main St, New York, NY" },
+      { label: "Street", apiKey: "street1", baseType: "string", sample: "123 Main St" },
+      { label: "Town / City", apiKey: "towncity", baseType: "string", sample: "New York" },
+      { label: "County / State", apiKey: "state", baseType: "string", sample: "NY" },
+      { label: "Postcode", apiKey: "postcode", baseType: "string", sample: "10001" },
+      { label: "Which industry is your business in?", apiKey: "which_industry_is_your_business_in", baseType: "string", picklist: ["Retail", "Food & Drink", "Other"], sample: "Retail" },
+      { label: "Which best describes your company (Retail)?", apiKey: "describe_your_company_retail", baseType: "string", picklist: US_POS_RETAIL_OPTIONS, sample: "Convenience Store" },
+      { label: "Which best describes your company (Food & Drink)?", apiKey: "describe_your_company_food_drink", baseType: "string", picklist: US_POS_FOOD_DRINK_OPTIONS, sample: "Casual Restaurant" },
+      { label: "Which best describes your company (Other)?", apiKey: "describe_your_company_other", baseType: "string", picklist: US_POS_OTHER_OPTIONS, sample: "Bottle Shop" },
+      { label: "Do you currently own a POS system?", apiKey: "do_you_currently_own_a_pos_system", baseType: "string", picklist: ["Yes", "No"], sample: "No" },
+      { label: "Who is your current provider?", apiKey: "who_is_your_current_provider", baseType: "string", picklist: POS_PROVIDER_OPTIONS, sample: "Helcim" },
+      { label: "How many terminals do you require?", apiKey: "how_many_terminals_do_you_require", baseType: "string", picklist: ["1", "2", "3-5", "over 5"], sample: "2" },
+      { label: "How much do you aim to process each month?", apiKey: "how_much_do_you_aim_to_process_each_month", baseType: "string", picklist: ["Under $1,000", "$1,000 - $5,000", "$5,000 - $10,000", "$10,000 - $20,000", "$20,000 - $40,000", "$40,000 - $100,000", "over $100,000", "none or unsure"], sample: "$20,000 - $40,000" },
+      { label: "What sort of POS system do you require?", apiKey: "what_sort_of_pos_system_do_you_require", baseType: "string", picklist: ["complete pos system", "tablet / ipad based system", "pos software only", "unsure, experts will advise"], sample: "Pos software only" },
+      { label: "When do you want to install a new POS system?", apiKey: "when_do_you_want_to_install_a_new_pos_system", baseType: "string", picklist: ["ASAP", "1-3 months", "4-6 months"], sample: "ASAP" },
+      { label: "Would you be interested in a free demo?", apiKey: "would_you_be_interested_in_a_free_demo", baseType: "string", picklist: ["Yes", "No"], sample: "Yes" },
+      { label: "Interested in credit card processing?", apiKey: "interested_in_credit_card_processing", baseType: "string", picklist: ["Yes", "No"], sample: "Yes" },
+      { label: "Company Name", apiKey: "what_is_your_company_name", baseType: "string", sample: "Acme Corp" },
+    ],
+  },
+];
+
+export const REGIONS: { id: "AU" | "NZ" | "US"; label: string }[] = [
+  { id: "AU", label: "Australia" },
+  { id: "NZ", label: "New Zealand" },
+  { id: "US", label: "United States" },
+];
