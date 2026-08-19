@@ -8,7 +8,10 @@ import DocsToc from "./DocsToc";
 export default function DocsPage() {
   return (
     <div className="relative min-h-screen">
-      <div className="fixed inset-0 pointer-events-none bg-grid-pattern bg-grid-size" aria-hidden="true" />
+      <div
+        className="fixed inset-0 pointer-events-none bg-grid-pattern bg-grid-size"
+        aria-hidden="true"
+      />
 
       <div className="relative">
         <Header />
@@ -18,11 +21,15 @@ export default function DocsPage() {
             <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-brand-600">
               API Reference
             </p>
-            <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">Vertical fields reference</h1>
+            <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">
+              Vertical fields reference
+            </h1>
             <p className="mt-2 max-w-2xl text-sm text-ink-500">
-              The data fields Uleads collects and can map into your CRM, per vertical. Ready to
-              integrate?{" "}
-              <Link href="/feedback" className="font-medium text-brand-700 underline underline-offset-2">
+              The data fields Uleads collects and can map into your CRM, per
+              vertical. Ready to integrate? <br />
+              <Link
+                href="/feedback"
+                className="font-medium text-brand-700 underline underline-offset-2">
                 See the buyer feedback API
               </Link>
               .
@@ -38,7 +45,9 @@ export default function DocsPage() {
 
             <div>
               {REGIONS.map((region) => {
-                const verticals = VERTICALS.filter((v) => v.region === region.id);
+                const verticals = VERTICALS.filter(
+                  (v) => v.region === region.id,
+                );
                 if (verticals.length === 0) return null;
                 return (
                   <div key={region.id} className="mb-8">
@@ -50,9 +59,12 @@ export default function DocsPage() {
                         key={vertical.slug}
                         id={vertical.slug}
                         title={vertical.name}
-                        subtitle={vertical.kind === "rich" ? `${vertical.fields.length} fields` : "Work in progress"}
-                        delay={i * 20}
-                      >
+                        subtitle={
+                          vertical.kind === "rich"
+                            ? `${vertical.fields.length} fields`
+                            : "Work in progress"
+                        }
+                        delay={i * 20}>
                         {vertical.kind === "rich" ? (
                           <div className="overflow-hidden border rounded-xl border-ink-200">
                             <SpecTable>
@@ -82,8 +94,8 @@ export default function DocsPage() {
 
           <div className="text-center">
             <p className="text-xs text-ink-400">
-              Field data sourced from the Uleads API documentation. Confirm exact specs for your
-              verticals with your Uleads partner manager.
+              Field data sourced from the Uleads API documentation. Confirm
+              exact specs for your verticals with your Uleads partner manager.
             </p>
           </div>
 
