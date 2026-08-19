@@ -1,34 +1,36 @@
 import Link from "next/link";
-import { KeyRound, Rocket, ShieldAlert } from "lucide-react";
+import { KeyRound, Rocket, ListChecks } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { CodeBlock, MethodBadge, StatusBadge, Field, FieldTable, Section } from "../components/DocsUI";
+import { CodeBlock, MethodBadge, Field, FieldTable, Section } from "../components/DocsUI";
 
-const BASE_URL = "https://api.uleads.com/v1";
+const BASE_URL = "https://ulead.leadbyte.co.uk/restapi/v1.3";
 
-const AUTH_EXAMPLE = `curl ${BASE_URL}/feedback \\
-  -H "Authorization: Bearer YOUR_API_KEY"`;
-
-const REQUEST_EXAMPLE = `curl -X POST ${BASE_URL}/feedback \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
+const AUTH_EXAMPLE = `curl -X PUT ${BASE_URL}/leads/feedback \\
   -H "Content-Type: application/json" \\
   -d '{
-    "leadId": 4821936,
-    "disposition": "accepted",
-    "notes": "Confirmed contact, booking scheduled"
+    "key": "YOUR_API_KEY",
+    "leads": [8419714],
+    "feedback": "INTER"
+  }'`;
+
+const REQUEST_EXAMPLE = `curl -X PUT ${BASE_URL}/leads/feedback \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "key": "YOUR_API_KEY",
+    "leads": [8419714, 8419715],
+    "BID": "BUY-A",
+    "feedback": "INTER",
+    "notes": "stuff",
+    "overwrite": "yes"
   }'`;
 
 const RESPONSE_EXAMPLE = `{
-  "id": "fb_7c31e0",
-  "leadId": 4821936,
-  "disposition": "accepted",
-  "receivedAt": "2026-08-19T10:22:03Z"
-}`;
-
-const ERROR_EXAMPLE = `{
-  "error": {
-    "code": "rate_limited",
-    "message": "Too many requests. Retry after 12 seconds."
+  "status": "Success",
+  "message": "Feedback submitted",
+  "details": {
+    "8419714": "Feedback submitted",
+    "8419715": "Feedback submitted"
   }
 }`;
 
@@ -85,8 +87,8 @@ export default function FeedbackPage() {
             </p>
             <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">Buyer feedback API</h1>
             <p className="mt-2 max-w-2xl text-sm text-ink-500">
-              Everything you need to send buyer feedback on your leads back into Uleads. Looking for
-              the data fields we send per vertical instead?{" "}
+              Send buyer feedback on one or more leads back into Uleads via our Leadbyte-hosted
+              endpoint. Looking for the data fields we send per vertical instead?{" "}
               <Link href="/docs" className="font-medium text-brand-700 underline underline-offset-2">
                 See the vertical fields reference
               </Link>
@@ -114,18 +116,18 @@ export default function FeedbackPage() {
                 <div>
                   <p className="text-sm font-semibold text-ink-900">2. Send feedback</p>
                   <p className="mt-0.5 text-xs text-ink-500">
-                    POST a disposition for each lead you receive, with your key in the Authorization header.
+                    PUT one or more lead IDs and a feedback code, with your key in the request body.
                   </p>
                 </div>
               </div>
               <div className="flex gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100">
-                  <ShieldAlert className="h-4 w-4 text-brand-700" />
+                  <ListChecks className="h-4 w-4 text-brand-700" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-ink-900">3. Handle errors</p>
+                  <p className="text-sm font-semibold text-ink-900">3. Check the response</p>
                   <p className="mt-0.5 text-xs text-ink-500">
-                    Check status codes and back off on 429s (see Rate limits below).
+                    Read the per-lead <code className="rounded bg-ink-100 px-1 py-0.5 text-[11px]">details</code> map to confirm every lead was accepted.
                   </p>
                 </div>
               </div>
@@ -134,16 +136,17 @@ export default function FeedbackPage() {
 
           <Section title="Base URL" delay={40}>
             <p className="mb-3 text-sm text-ink-600">
-              All requests are made against a single base URL:
+              All requests are made against our Leadbyte-hosted API:
             </p>
             <CodeBlock code={BASE_URL} />
           </Section>
 
-          <Section title="Authentication" subtitle="API key via Bearer token" delay={80}>
+          <Section title="Authentication" subtitle="API key in the request body" delay={80}>
             <p className="mb-3 text-sm text-ink-600">
               We issue you an API key directly — nothing to generate or request through this page.
-              Pass it as a Bearer token in the <code className="rounded bg-ink-100 px-1 py-0.5 text-xs">Authorization</code> header
-              on every request.
+              Unlike most REST APIs, the key isn&apos;t passed as a header — include it as the{" "}
+              <code className="rounded bg-ink-100 px-1 py-0.5 text-xs">key</code> field in the JSON
+              request body on every call.
             </p>
             <CodeBlock code={AUTH_EXAMPLE} />
           </Section>
@@ -170,10 +173,10 @@ export default function FeedbackPage() {
             </div>
           </Section>
 
-          <Section title="Example endpoint" subtitle="Submit buyer feedback" delay={140}>
+          <Section title="Example endpoint" subtitle="Add buyer feedback for a lead" delay={140}>
             <div className="mb-4 flex items-center gap-2">
-              <MethodBadge method="POST" />
-              <code className="font-mono text-sm text-ink-900">/feedback</code>
+              <MethodBadge method="PUT" />
+              <code className="font-mono text-sm text-ink-900">/leads/feedback</code>
             </div>
 
             <p className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-400">
@@ -181,14 +184,26 @@ export default function FeedbackPage() {
             </p>
             <div className="mb-5 overflow-hidden border rounded-xl border-ink-200">
               <FieldTable>
-                <Field name="leadId" type="integer">
-                  The lead ID you received from Uleads.
+                <Field name="key" type="string">
+                  Your API key.
                 </Field>
-                <Field name="disposition" type="string">
-                  One of <code>accepted</code>, <code>rejected</code>, <code>duplicate</code>, <code>converted</code>.
+                <Field name="leads" type="integer[]">
+                  One or more lead IDs to add buyer feedback to.
+                </Field>
+                <Field name="feedback" type="string">
+                  Buyer feedback reference code — confirm valid codes with your Uleads partner manager.
+                </Field>
+                <Field name="BID" type="string (optional)">
+                  Single buyer ID to attribute the feedback to.
                 </Field>
                 <Field name="notes" type="string (optional)">
-                  Free-text context for the disposition.
+                  Free-text note attached to the feedback.
+                </Field>
+                <Field name="overwrite" type="string (optional)">
+                  <code>yes</code> replaces all previous feedback on the lead(s); <code>no</code> (default) adds a new feedback entry.
+                </Field>
+                <Field name="debug" type="string (optional)">
+                  <code>yes</code> pretty-prints the JSON response; <code>no</code> (default, recommended) returns compact output.
                 </Field>
               </FieldTable>
             </div>
@@ -206,54 +221,21 @@ export default function FeedbackPage() {
             <CodeBlock code={RESPONSE_EXAMPLE} />
           </Section>
 
-          <Section title="Errors" delay={180}>
-            <div className="mb-4 overflow-hidden border rounded-xl border-ink-200">
-              <table className="w-full text-sm text-left">
-                <thead>
-                  <tr className="border-b border-ink-200">
-                    <th className="px-5 py-3 text-xs font-medium tracking-widest text-ink-400">
-                      Status
-                    </th>
-                    <th className="px-5 py-3 text-xs font-medium tracking-widest text-ink-400">
-                      Meaning
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-ink-100">
-                    <td className="px-5 py-3"><StatusBadge code="200" /></td>
-                    <td className="px-5 py-3 text-sm text-ink-600">Request succeeded.</td>
-                  </tr>
-                  <tr className="border-b border-ink-100">
-                    <td className="px-5 py-3"><StatusBadge code="401" /></td>
-                    <td className="px-5 py-3 text-sm text-ink-600">Missing or invalid API key.</td>
-                  </tr>
-                  <tr className="border-b border-ink-100">
-                    <td className="px-5 py-3"><StatusBadge code="404" /></td>
-                    <td className="px-5 py-3 text-sm text-ink-600">Resource not found.</td>
-                  </tr>
-                  <tr className="border-b border-ink-100">
-                    <td className="px-5 py-3"><StatusBadge code="429" /></td>
-                    <td className="px-5 py-3 text-sm text-ink-600">Rate limit exceeded — back off and retry.</td>
-                  </tr>
-                  <tr>
-                    <td className="px-5 py-3"><StatusBadge code="500" /></td>
-                    <td className="px-5 py-3 text-sm text-ink-600">Something went wrong on our end.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-400">
-              Example error body
+          <Section title="Response status" delay={180}>
+            <p className="text-sm text-ink-600">
+              Every response includes a top-level <code className="rounded bg-ink-100 px-1 py-0.5 text-xs">status</code> (e.g. <code>Success</code>) and{" "}
+              <code className="rounded bg-ink-100 px-1 py-0.5 text-xs">message</code>, plus a{" "}
+              <code className="rounded bg-ink-100 px-1 py-0.5 text-xs">details</code> object keyed
+              by lead ID so you can confirm each lead in the batch was processed. The full list of
+              possible status and error values isn&apos;t published here yet — confirm with your
+              Uleads partner manager.
             </p>
-            <CodeBlock code={ERROR_EXAMPLE} />
           </Section>
 
-          <Section title="Rate limits" delay={220}>
+          <Section title="Rate limits" delay={200}>
             <p className="text-sm text-ink-600">
-              Requests are limited to <strong>60 per minute</strong> per API key. Exceeding this
-              returns a <StatusBadge code="429" /> response — check the response body for a suggested
-              retry delay.
+              Rate limits for this endpoint aren&apos;t published here yet — check with your Uleads
+              partner manager for current limits.
             </p>
           </Section>
 

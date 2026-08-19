@@ -12,7 +12,7 @@ const VALUE_PROPS = [
   {
     icon: MessageSquareText,
     title: "Feedback API",
-    body: "Report lead dispositions and outcomes back to Uleads with a single POST request.",
+    body: "Report buyer feedback for one or more leads back to Uleads in a single request.",
   },
   {
     icon: Gauge,
