@@ -35,6 +35,44 @@ export function CodeBlock({ code }: { code: string }) {
   );
 }
 
+const CODE_TAB_LABELS: Record<string, string> = {
+  curl: "cURL",
+  json: "JSON",
+  javascript: "JavaScript",
+  python: "Python",
+};
+
+export function CodeTabs({
+  examples,
+}: {
+  examples: Partial<Record<"curl" | "json" | "javascript" | "python", string>>;
+}) {
+  const languages = Object.keys(examples) as Array<keyof typeof examples>;
+  const [active, setActive] = useState(languages[0]);
+
+  return (
+    <div>
+      <div className="mb-2 flex w-fit gap-1 rounded-lg bg-ink-100 p-1">
+        {languages.map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => setActive(lang)}
+            className={clsx(
+              "rounded-md px-3 py-1 text-xs font-medium transition-colors",
+              active === lang
+                ? "bg-white text-ink-900 shadow-sm"
+                : "text-ink-500 hover:text-ink-700",
+            )}>
+            {CODE_TAB_LABELS[lang]}
+          </button>
+        ))}
+      </div>
+      <CodeBlock code={examples[active] ?? ""} />
+    </div>
+  );
+}
+
 export function MethodBadge({ method }: { method: string }) {
   return (
     <span className="rounded-md bg-brand-100 px-2 py-0.5 text-xs font-bold tracking-wide text-brand-700">

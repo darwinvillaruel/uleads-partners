@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import {
   CodeBlock,
+  CodeTabs,
   MethodBadge,
   Field,
   FieldTable,
@@ -11,16 +12,44 @@ import {
 } from "../components/DocsUI";
 
 const BASE_URL = "https://ulead.leadbyte.co.uk/restapi/v1.3";
+const FEEDBACK_URL = `${BASE_URL}/leads/feedback`;
 
-const AUTH_EXAMPLE = `curl -X PUT ${BASE_URL}/leads/feedback \\
+const AUTH_EXAMPLES = {
+  curl: `curl -X PUT ${FEEDBACK_URL} \\
   -H "Content-Type: application/json" \\
   -d '{
     "key": "YOUR_API_KEY",
     "leads": [8419714],
     "feedback": "INTER"
-  }'`;
+  }'`,
+  json: `{
+  "key": "YOUR_API_KEY",
+  "leads": [8419714],
+  "feedback": "INTER"
+}`,
+  javascript: `fetch("${FEEDBACK_URL}", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    key: "YOUR_API_KEY",
+    leads: [8419714],
+    feedback: "INTER",
+  }),
+});`,
+  python: `import requests
 
-const REQUEST_EXAMPLE = `curl -X PUT ${BASE_URL}/leads/feedback \\
+requests.put(
+    "${FEEDBACK_URL}",
+    json={
+        "key": "YOUR_API_KEY",
+        "leads": [8419714],
+        "feedback": "INTER",
+    },
+)`,
+};
+
+const REQUEST_EXAMPLES = {
+  curl: `curl -X PUT ${FEEDBACK_URL} \\
   -H "Content-Type: application/json" \\
   -d '{
     "key": "YOUR_API_KEY",
@@ -29,7 +58,41 @@ const REQUEST_EXAMPLE = `curl -X PUT ${BASE_URL}/leads/feedback \\
     "feedback": "INTER",
     "notes": "stuff",
     "overwrite": "yes"
-  }'`;
+  }'`,
+  json: `{
+  "key": "YOUR_API_KEY",
+  "leads": [8419714, 8419715],
+  "BID": "BUY-A",
+  "feedback": "INTER",
+  "notes": "stuff",
+  "overwrite": "yes"
+}`,
+  javascript: `fetch("${FEEDBACK_URL}", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    key: "YOUR_API_KEY",
+    leads: [8419714, 8419715],
+    BID: "BUY-A",
+    feedback: "INTER",
+    notes: "stuff",
+    overwrite: "yes",
+  }),
+});`,
+  python: `import requests
+
+requests.put(
+    "${FEEDBACK_URL}",
+    json={
+        "key": "YOUR_API_KEY",
+        "leads": [8419714, 8419715],
+        "BID": "BUY-A",
+        "feedback": "INTER",
+        "notes": "stuff",
+        "overwrite": "yes",
+    },
+)`,
+};
 
 const RESPONSE_EXAMPLE = `{
   "status": "Success",
@@ -84,6 +147,27 @@ const VERTICAL_CATEGORIES = [
     name: "Seniors",
     verticals: ["Hearing", "Medical Alert"],
   },
+];
+
+const FEEDBACK_OPTIONS = [
+  { name: "Buyer Duplicate", reference: "DUPE" },
+  { name: "Call Back", reference: "Call Back" },
+  { name: "Chosen Competitor", reference: "Chosen Competitor" },
+  { name: "Contacted – Changed Mind", reference: "Changed Mind" },
+  { name: "Disconnected Phone", reference: "Invalid Phone" },
+  { name: "Do Not Call Complaint", reference: "DNCC" },
+  { name: "Incentivised/False Marketing", reference: "FALSEMARK" },
+  { name: "Just Looking", reference: "Just Looking" },
+  { name: "Never Applied", reference: "NOAPPLY" },
+  { name: "Not Interested", reference: "Not Interested" },
+  { name: "Old Lead (3+ Days)", reference: "OLD" },
+  { name: "Other", reference: "OTHER" },
+  { name: "Quote", reference: "Quote" },
+  { name: "Sold", reference: "SOLD" },
+  { name: "SPAM Complaint (Email)", reference: "SPAM" },
+  { name: "Unable to Contact", reference: "NCON" },
+  { name: "Wrong Phone Number", reference: "WNUM" },
+  { name: "Wrong Product (interested in different product)", reference: "WPROD" },
 ];
 
 export default function FeedbackPage() {
@@ -187,7 +271,7 @@ export default function FeedbackPage() {
               </code>{" "}
               field in the JSON request body on every call.
             </p>
-            <CodeBlock code={AUTH_EXAMPLE} />
+            <CodeTabs examples={AUTH_EXAMPLES} />
           </Section>
 
           {/* <Section
@@ -237,8 +321,13 @@ export default function FeedbackPage() {
                   One or more lead IDs to add buyer feedback to.
                 </Field>
                 <Field name="feedback" type="string">
-                  Buyer feedback reference code — confirm valid codes with your
-                  Uleads partner manager.
+                  Buyer feedback reference code — see the{" "}
+                  <a
+                    href="#feedback-codes"
+                    className="font-medium text-brand-700 underline underline-offset-2">
+                    feedback codes
+                  </a>{" "}
+                  reference below.
                 </Field>
                 <Field name="BID" type="string (optional)">
                   Single buyer ID to attribute the feedback to.
@@ -261,13 +350,50 @@ export default function FeedbackPage() {
               Example request
             </p>
             <div className="mb-5">
-              <CodeBlock code={REQUEST_EXAMPLE} />
+              <CodeTabs examples={REQUEST_EXAMPLES} />
             </div>
 
             <p className="mb-2 text-xs font-medium uppercase tracking-widest text-ink-400">
               Example response
             </p>
             <CodeBlock code={RESPONSE_EXAMPLE} />
+          </Section>
+
+          <Section
+            id="feedback-codes"
+            title="Feedback codes"
+            subtitle="Valid values for the feedback field"
+            delay={160}>
+            <div className="overflow-hidden border rounded-xl border-ink-200">
+              <table className="w-full text-sm text-left">
+                <thead>
+                  <tr className="border-b border-ink-200">
+                    <th className="px-5 py-3 text-xs font-medium tracking-widest text-ink-400">
+                      Name
+                    </th>
+                    <th className="px-5 py-3 text-xs font-medium tracking-widest text-ink-400">
+                      Reference
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {FEEDBACK_OPTIONS.map((option) => (
+                    <tr
+                      key={option.reference}
+                      className="border-b border-ink-100 last:border-0">
+                      <td className="px-5 py-3 text-sm text-ink-700">
+                        {option.name}
+                      </td>
+                      <td className="px-5 py-3">
+                        <code className="rounded bg-ink-100 px-1.5 py-0.5 text-xs text-ink-700">
+                          {option.reference}
+                        </code>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </Section>
 
           <Section title="Response status" delay={180}>
