@@ -32,20 +32,20 @@ export default function LandingPage() {
       <div className="relative">
         <Header />
 
-        <main className="relative mx-auto max-w-screen-2xl px-4 py-8 sm:px-6">
+        <main className="relative px-4 py-8 mx-auto max-w-screen-2xl sm:px-6">
           {/* Hero */}
-          <section className="animate-fade-up py-20 text-center sm:py-28">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-brand-600">
+          <section className="py-20 text-center animate-fade-up sm:py-28">
+            <p className="mb-4 text-xs font-semibold tracking-widest uppercase text-brand-600">
               Partner Integration Portal
             </p>
-            <h1 className="mx-auto max-w-2xl text-4xl font-bold text-ink-900 sm:text-5xl">
+            <h1 className="max-w-2xl mx-auto text-4xl font-bold text-ink-900 sm:text-5xl">
               Build on Uleads
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-base text-ink-500 sm:text-lg">
+            <p className="max-w-xl mx-auto mt-4 text-base text-ink-500 sm:text-lg">
               Receive leads across the verticals you serve, and report buyer
               feedback straight back into Uleads via a simple API.
             </p>
-            <div className="mt-8 flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3 mt-8">
               <Link
                 href="/docs"
                 className="rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-ink-950 shadow-sm shadow-brand-500/20 transition-all hover:bg-brand-600 active:scale-95">
@@ -64,10 +64,10 @@ export default function LandingPage() {
             {VALUE_PROPS.map(({ icon: Icon, title, body }, i) => (
               <div
                 key={title}
-                className="animate-fade-up rounded-2xl border border-ink-200 bg-white p-5 shadow-sm"
+                className="p-5 bg-white border shadow-sm animate-fade-up rounded-2xl border-ink-200"
                 style={{ animationDelay: `${i * 80}ms` }}>
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-brand-100">
-                  <Icon className="h-5 w-5 text-brand-700" />
+                <div className="flex items-center justify-center w-10 h-10 mb-3 rounded-full bg-brand-100">
+                  <Icon className="w-5 h-5 text-brand-700" />
                 </div>
                 <h3 className="mb-1 text-sm font-semibold text-ink-900">
                   {title}
@@ -78,7 +78,7 @@ export default function LandingPage() {
           </section>
 
           {/* Bottom CTA */}
-          <section className="animate-fade-up rounded-2xl border border-ink-200 bg-white p-8 text-center shadow-sm">
+          <section className="p-8 text-center bg-white border shadow-sm animate-fade-up rounded-2xl border-ink-200">
             <h2 className="mb-2 text-xl font-bold text-ink-900">
               Ready to integrate?
             </h2>
@@ -86,7 +86,7 @@ export default function LandingPage() {
               Check out the API integration docs to get started.
             </p>
             <Link
-              href="/feedback"
+              href="/docs"
               className="inline-block rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-medium text-ink-950 shadow-sm shadow-brand-500/20 transition-all hover:bg-brand-600 active:scale-95">
               Read the Docs
             </Link>
