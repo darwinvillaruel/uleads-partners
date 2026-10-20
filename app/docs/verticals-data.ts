@@ -3049,12 +3049,6 @@ export const VERTICALS: Vertical[] = [
         sample: "4165551234",
       },
       {
-        label: "Address",
-        apiKey: "address",
-        baseType: "string",
-        sample: "123 Main St, Toronto, ON",
-      },
-      {
         label: "Street",
         apiKey: "street1",
         baseType: "string",
